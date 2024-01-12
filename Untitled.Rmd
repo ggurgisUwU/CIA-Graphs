@@ -1,0 +1,99 @@
+---
+title: "CIA Zoo Budget"
+author: "George Gurgis"
+date: "2024-01-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(googlesheets4)
+library(plyr)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(tibble)
+
+```
+
+
+```{r}
+x <- read_sheet('https://docs.google.com/spreadsheets/d/1EgwMKvP9ju6SBwk_ZKQm6iMiUkt8ySk6d3U01ryJ3Tc/edit?usp=sharing')
+
+initial_budget <- 1000000
+Amount.left <- x$`Amount left`
+Cost <- x$Cost
+```
+
+
+```{r}
+B <- as.numeric(length(Amount.left))  
+#for(i in 1:B){
+
+for(i in 1:B){
+
+  #Amount.left <- append(Amount.left, 1)
+Test <- Amount.left[i] - x$Cost[i]
+A <- tail(Amount.left,1)
+Amount.left[i+1] <- Test
+B <- as.numeric(length(Amount.left))
+
+
+}
+#}
+
+Amount.left <- na.omit(Amount.left)
+#Amount.left.DS <- data.frame(x,Amount.left)
+
+x <- rbind(x, rep(NA,7))
+x <- cbind(x,Amount.left)
+
+Day.1.Costs <- filter(x, Day == '1' )
+Day.1.CS <- sum(Day.1.Costs$Cost)
+
+Day.2 <- filter(x, Day == '2' )
+Day.2.CS <- sum(Day.2$Cost)
+
+Day.3 <- filter(x, Day == '3' )
+Day.3.CS <- sum(Day.3$Cost)
+
+Day.4 <- filter(x, Day == '4' )
+Day.4.CS <- sum(Day.4$Cost)
+
+Day.5 <- filter(x, Day == '5' )
+Day.5.CS <- sum(Day.5$Cost)
+
+All.Days.CV <- c(Day.1.CS, Day.2.CS,Day.3.CS, Day.4.CS, Day.5.CS)
+Days <- c(1:5)
+
+Day.1 <- filter(x, Day == '1' )
+Day.1.LS <- min(Day.1$Amount.left)
+
+Day.2 <- filter(x, Day == '2' )
+Day.2.LS <- min(Day.2$Amount.left)
+
+Day.3 <- filter(x, Day == '3' )
+Day.3.LS <- min(Day.3$Amount.left)
+
+Day.4 <- filter(x, Day == '4' )
+Day.4.LS <- min(Day.4$Amount.left)
+
+Day.5 <- filter(x, Day == '5' )
+Day.5.LS <- min(Day.5$Amount.left)
+
+Left.Sum.All <- c(Day.1.LS,Day.2.LS,Day.3.LS,Day.4.LS,Day.5.LS)
+
+Graph.DS <- data.frame(Day = Days, Leftover.Money = Left.Sum.All)
+
+#x <- append(x, Amount.left)
+```
+
+
+
+```{r}
+ggplot(Graph.DS, aes(x = Day, y = Leftover.Money)) +
+  geom_line( )
+```
